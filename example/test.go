@@ -7,9 +7,12 @@ import (
 )
 
 func main() {
-	tagger, err := mecab.NewTagger("-d /usr/local/Cellar/mecab/0.996/lib/mecab/dic/ipadic")
+	tagger, err := mecab.NewTagger("-Owakati")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(tagger.Parse("すもももももももものうち"))
+
+	for node := tagger.ParseToNode("すもももももももものうち"); node != nil; node = node.Next {
+		fmt.Printf("%s\t%s\n", node.Surface, node.Feature)
+	}
 }
