@@ -46,62 +46,8 @@ func (t *Tagger) ParseToNode(arg string) *Node {
 	argc := C.CString(arg)
 	defer C.free(unsafe.Pointer(argc))
 
-	var convert func(prev *Node, node *C.struct_mecab_node_t) *Node
-	convert = func(prev *Node, node *C.struct_mecab_node_t) *Node {
-		if node == nil {
-			return nil
-		}
-
-		self := new(Node)
-		self.Prev = prev
-		self.Next = convert(self, node.next)
-
-		self.Length = int(node.length)
-		self.RLength = int(node.rlength)
-		self.Id = int(node.id)
-		self.RcAttr = int(node.rcAttr)
-		self.LcAttr = int(node.lcAttr)
-		self.PosId = int(node.posid)
-		self.Char_type = int(node.char_type)
-		self.Stat = int(node.stat)
-		self.Isbest = int(node.isbest)
-
-		self.Alpha = float32(node.alpha)
-		self.Beta = float32(node.beta)
-		self.Prob = float32(node.prob)
-
-		self.WCost = int(node.wcost)
-		self.Cost = int(node.cost)
-		self.Surface = string([]byte(C.GoString(node.surface))[:self.Length])
-		self.Feature = C.GoString(node.feature)
-		return self
-	}
-
 	_node := C.mecab_sparse_tonode(t.tagger, argc)
 	defer C.free(unsafe.Pointer(_node))
 
-	node := new(Node)
-	node.Prev = nil
-	node.Next = convert(node, _node.next)
-
-	node.Length = int(_node.length)
-	node.RLength = int(_node.rlength)
-	node.Id = int(_node.id)
-	node.RcAttr = int(_node.rcAttr)
-	node.LcAttr = int(_node.lcAttr)
-	node.PosId = int(_node.posid)
-	node.Char_type = int(_node.char_type)
-	node.Stat = int(_node.stat)
-	node.Isbest = int(_node.isbest)
-
-	node.Alpha = float32(_node.alpha)
-	node.Beta = float32(_node.beta)
-	node.Prob = float32(_node.prob)
-
-	node.WCost = int(_node.wcost)
-	node.Cost = int(_node.cost)
-	node.Surface = string([]byte(C.GoString(_node.surface))[:node.Length])
-	node.Feature = C.GoString(_node.feature)
-
-	return node
+	return NodeFromCmecab_node_t(nil, _node)
 }
