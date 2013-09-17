@@ -49,5 +49,5 @@ func (t *Tagger) ParseToNode(arg string) *Node {
 	_node := C.mecab_sparse_tonode(t.tagger, argc)
 	defer C.free(unsafe.Pointer(_node))
 
-	return NodeFromCmecab_node_t(nil, _node)
+	return NodeFromCmecab_node_t(nil, (*C.struct_mecab_node_t)(unsafe.Pointer(_node)))
 }

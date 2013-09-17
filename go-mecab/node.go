@@ -61,7 +61,7 @@ func NewNode(prev, next *Node, surface, feature string, length, rlength, id, rcA
 		Cost:  cost}
 }
 
-func NodeFromCstruct_mecab_node_t(prev *Node, node *C.struct_mecab_node_t) *Node {
+func NodeFromCmecab_node_t(prev *Node, node *C.struct_mecab_node_t) *Node {
 	if node == nil {
 		return nil
 	}
@@ -85,34 +85,6 @@ func NodeFromCstruct_mecab_node_t(prev *Node, node *C.struct_mecab_node_t) *Node
 		float32(node.prob),
 		int(node.wcost),
 		int(node.cost))
-	n.Next = NodeFromCstruct_mecab_node_t(n, node.next)
-	return n
-}
-
-func NodeFromCmecab_node_t(prev *Node, node *C.mecab_node_t) *Node {
-	if node == nil {
-		return nil
-	}
-
-	n := NewNode(
-		prev,
-		nil,
-		string(C.GoBytes(unsafe.Pointer(node.surface), C.int(node.length))),
-		C.GoString(node.feature),
-		int(node.length),
-		int(node.rlength),
-		int(node.id),
-		int(node.rcAttr),
-		int(node.lcAttr),
-		int(node.posid),
-		int(node.char_type),
-		int(node.stat),
-		int(node.isbest),
-		float32(node.alpha),
-		float32(node.beta),
-		float32(node.prob),
-		int(node.wcost),
-		int(node.cost))
-	n.Next = NodeFromCstruct_mecab_node_t(n, node.next)
+	n.Next = NodeFromCmecab_node_t(n, node.next)
 	return n
 }
