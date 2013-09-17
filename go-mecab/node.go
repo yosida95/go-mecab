@@ -8,6 +8,7 @@ package mecab
 #include <mecab.h>
 */
 import "C"
+import "unsafe"
 
 type Node struct {
 	Prev *Node
@@ -68,7 +69,7 @@ func NodeFromCstruct_mecab_node_t(prev *Node, node *C.struct_mecab_node_t) *Node
 	n := NewNode(
 		prev,
 		nil,
-		string([]byte(C.GoString(node.surface))[:int(node.length)]),
+		string(C.GoBytes(unsafe.Pointer(node.surface), C.int(node.length))),
 		C.GoString(node.feature),
 		int(node.length),
 		int(node.rlength),
@@ -96,7 +97,7 @@ func NodeFromCmecab_node_t(prev *Node, node *C.mecab_node_t) *Node {
 	n := NewNode(
 		prev,
 		nil,
-		string([]byte(C.GoString(node.surface))[:int(node.length)]),
+		string(C.GoBytes(unsafe.Pointer(node.surface), C.int(node.length))),
 		C.GoString(node.feature),
 		int(node.length),
 		int(node.rlength),
